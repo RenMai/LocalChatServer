@@ -1,7 +1,6 @@
 object Users
 {
     private val userList: HashSet<String> = hashSetOf()
-
     fun addUsername(username: String): Boolean
     {
         if (!isUsernameExist(username))

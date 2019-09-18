@@ -2,12 +2,12 @@ import java.io.*
 import java.net.*
 import java.util.*
 
-class ChatConnector(inputStream: InputStream, output: OutputStream, private val client: Socket) : ChatHistoryObserver, Runnable {
+class ChatConnector(inputStream: InputStream, output: OutputStream, private val client: Socket) : ChatHistoryObserver, Runnable
+{
     private val scanner: Scanner = Scanner(inputStream)
     private val printOut: PrintStream = PrintStream(output)
     var username: String = ""
     var exit = false
-
     override fun newMessage(message: ChatMessage)
     {
         if (message.username != username)
@@ -19,11 +19,12 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
     {
         ChatHistory.registerObserver(this)
         printOut.println("Welcome to private chat Server!")
+
         var command = ""
         do {
             while (username == "")
             {
-                printOut.println("Use the command -user [username] to set the username.")
+                printOut.println("Use the command -user [username] to set the username.\r\nUse the command -exit to quit.")
                 val command = scanner.nextLine()
                 if (command.split(' ')[0] == "-user")
                 {
@@ -36,12 +37,17 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
                             username = inputCommand
                             printOut.println("Your username is $username")
                             printOut.println("Now you can chat with your friends or use -help for help.")
+                            TopChatter().initTopChatter(username)
                         }
                         else
                             printOut.println("This username is already taken!")
                     }
                     else
                         printOut.println("Oops, something went wrong!")
+                }
+                else if (command=="-exit")
+                {
+                    quickShutdown()
                 }
             }
             command = scanner.nextLine()
@@ -61,8 +67,9 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
                         }
                     else
                     {
-                        ChatHistory.insert(ChatMessage(username, command))
+                        ChatHistory.insert(ChatMessage(username, command).getJSonMessage())
                         ChatHistory.notifyObservers(ChatMessage(username, command))
+                        ChatConsole().newMessage(ChatMessage(username,command))
                     }
                 }
             }
@@ -83,6 +90,10 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
         ChatHistory.notifyObservers(ChatMessage(username, "has left the server"))
         client.close()
         Users.removeUsername(username)
+        exit = true
+    }
+    private fun quickShutdown() {
+        client.close()
         exit = true
     }
 }

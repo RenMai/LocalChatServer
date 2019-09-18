@@ -1,7 +1,6 @@
 object ChatHistory : ChatHistoryObservable {
     private val messageHistory: MutableList<ChatMessage> = mutableListOf()
     private val observers: MutableList<ChatHistoryObserver> = mutableListOf()
-
     override fun registerObserver(observer: ChatHistoryObserver)
     {
         observers.add(observer)
