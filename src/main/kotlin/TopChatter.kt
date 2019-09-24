@@ -1,17 +1,16 @@
-class TopChatter:ChatHistoryObserver {
-    override fun newMessage(message: ChatMessage) {
+object TopChatter : ChatHistoryObserver {
+    private val messageCountMap = mutableMapOf<String, Int>()
+
+    override fun newMessage(chatMessage: ChatMessage) {
+        if (!messageCountMap.containsKey(chatMessage.username)) {
+            messageCountMap[chatMessage.username] = 0   //init the username in Map
+        } else {
+            var count = messageCountMap[chatMessage.username]!!
+            messageCountMap[chatMessage.username] = ++count //Start counting
+        }
     }
-    var countMessage:Int=0
-    private val topChatter: MutableMap<String,Int> = mutableMapOf()
-    init {
-        ChatHistory.registerObserver(this)
-    }
-    fun initTopChatter(username: String)
-    {
-        topChatter[username] = countMessage
-    }
-    fun addTopChatter(username: String)
-    {
-        topChatter[username]=++countMessage
+
+    fun getTopChatterList(): Map<String, Int> {
+        return messageCountMap.toMap()
     }
 }

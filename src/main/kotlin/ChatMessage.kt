@@ -2,16 +2,16 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 @Serializable
-class ChatMessage (val username: String, val message: String) {
+class ChatMessage(val username: String, val message: String, val chatTime: String) {
     fun getMessageInOneLine(): String {
-        return "$username: $message"
+        return "$chatTime $username: $message"
     }
-    private fun jSonMessage() : String
-    {
-        return Json.stringify(serializer(),ChatMessage(username, message))
+
+    private fun jSonMessage(): String {
+        return Json.stringify(serializer(), ChatMessage(username, message, chatTime))
     }
-    fun getJSonMessage(): ChatMessage
-    {
+
+    fun getJSonMessage(): ChatMessage {
         return Json.parse(serializer(), jSonMessage())
     }
 }
