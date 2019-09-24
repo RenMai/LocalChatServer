@@ -23,8 +23,8 @@ object Users {
     }
 
     override fun toString(): String {
-        var users = userList.toList()
-        var formattedString: String = ""
+        val users = userList.toList()
+        var formattedString = ""
         for (i in users) {
             formattedString += "\n $i"
         }

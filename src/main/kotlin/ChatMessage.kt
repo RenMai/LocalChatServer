@@ -1,7 +1,7 @@
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-@Serializable
+@Serializable @kotlinx.serialization.UnstableDefault
 class ChatMessage(val username: String, val message: String, val chatTime: String) {
     fun getMessageInOneLine(): String {
         return "$chatTime $username: $message"

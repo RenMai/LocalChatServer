@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-
+@kotlinx.serialization.UnstableDefault
 class ChatConnector(inputStream: InputStream, output: OutputStream, private val client: Socket) : ChatHistoryObserver,
     Runnable {
     private val scanner: Scanner = Scanner(inputStream)
@@ -34,7 +34,10 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
                 val separateString = command.split(' ')
                 if (separateString.size > 1) {
                     val inputCommand = command.substringAfter(" ")  //String after <blank> will become the username
-                    if (Users.addUsername(inputCommand)) {
+                    if (inputCommand == "") {
+                        printOut.println("Please enter username!")
+                    }
+                    else if (Users.addUsername(inputCommand)) {
                         username = inputCommand
                         printOut.println("Your username is $username")
                         printOut.println("Now you can chat with your friends or use -help for help.")
@@ -51,7 +54,7 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
     private fun chatting() {
         TopChatter.newMessage(ChatMessage(username, "", ""))    //add user to top chatters for counting
         printChatters(TopChatter.getTopChatterList())
-        var command = ""
+        var command: String
         do {
             command = scanner.nextLine()
             when (command.split(' ')[0]) {
@@ -117,7 +120,8 @@ class ChatConnector(inputStream: InputStream, output: OutputStream, private val 
     //shutdown and remove username
     private fun shutdown() {
         printChatters(TopChatter.getTopChatterList())
-        ChatHistory.notifyObservers(ChatMessage(username, "has left the server", ""))
+        ChatHistory.notifyObservers(ChatMessage(username, "has left the server", LocalDateTime.now().format(formatter)))
+        println("${LocalDateTime.now().format(formatter)} $username has left the server")
         client.close()
         Users.removeUsername(username)
         exit = true

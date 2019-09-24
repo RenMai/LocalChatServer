@@ -1,16 +1,17 @@
+@kotlinx.serialization.UnstableDefault
 object TopChatter : ChatHistoryObserver {
-    private val messageCountMap = mutableMapOf<String, Int>()
+    private val countMessage = mutableMapOf<String, Int>()
 
     override fun newMessage(chatMessage: ChatMessage) {
-        if (!messageCountMap.containsKey(chatMessage.username)) {
-            messageCountMap[chatMessage.username] = 0   //init the username in Map
+        if (!countMessage.containsKey(chatMessage.username)) {
+            countMessage[chatMessage.username] = 0   //init the username in Map
         } else {
-            var count = messageCountMap[chatMessage.username]!!
-            messageCountMap[chatMessage.username] = ++count //Start counting
+            var count = countMessage[chatMessage.username]!!
+            countMessage[chatMessage.username] = ++count //Start counting
         }
     }
 
     fun getTopChatterList(): Map<String, Int> {
-        return messageCountMap.toMap()
+        return countMessage.toMap()
     }
 }
